@@ -24,7 +24,7 @@ class QToon(
 ) : HttpSource() {
     override val name = "QToon"
 
-    private val domain = "qtoon.com"
+    private val domain = "qtoon.org"
     override val baseUrl = "https://$domain"
     private val apiUrl = "https://api.$domain"
 
