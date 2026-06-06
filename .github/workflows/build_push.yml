@@ -71,11 +71,8 @@ jobs:
       - name: Build extensions (${{ matrix.chunk.number }})
         env:
           MODULES: ${{ join(matrix.chunk.modules, ' ') }}
-          ALIAS: ${{ secrets.ALIAS }}
-          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          ./gradlew $MODULES
+          ./gradlew $MODULES -Pandroid.injected.signing.store.file=$(pwd)/signingkey.jks -Pandroid.injected.signing.store.password=123456 -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password=123456
 
       - name: Upload APKs (${{ matrix.chunk.number }})
         uses: actions/upload-artifact@v4
