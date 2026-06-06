@@ -44,7 +44,7 @@ jobs:
     name: Build extensions (${{ matrix.chunk.number }})
     needs: prepare
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     if: ${{ toJson(fromJson(needs.prepare.outputs.matrix).chunk) != '[]' }}
     strategy:
       fail-fast: false
@@ -65,10 +65,10 @@ jobs:
           cache-read-only: ${{ matrix.chunk.number > 1 }}
 
       - name: Prepare signing key
-   env:
-    SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-  run: |
-    python3 -c "import base64, os; open('signingkey.jks', 'wb').write(base64.b64decode(os.environ['SIGNING_KEY']))"
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          python3 -c "import base64, os; open('signingkey.jks', 'wb').write(base64.b64decode(os.environ['SIGNING_KEY']))"
 
       - name: Build extensions (${{ matrix.chunk.number }})
         env:
