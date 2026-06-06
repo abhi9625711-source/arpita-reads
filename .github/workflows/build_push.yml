@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.generate-matrices.outputs.matrix }}
-      delete: ${{ steps.generate-matrices.output s.delete }}
+      delete: ${{ steps.generate-matrices.outputs.delete }}
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v4
@@ -66,7 +66,8 @@ jobs:
 
       - name: Prepare signing key
         run: |
-             keytool -genkey -v -keystore signingkey.jks -alias key0 -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=Unknown"
+          keytool -genkey -v -keystore signingkey.jks -alias key0 -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=Unknown"
+
       - name: Build extensions (${{ matrix.chunk.number }})
         env:
           MODULES: ${{ join(matrix.chunk.modules, ' ') }}
