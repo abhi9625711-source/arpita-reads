@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.generate-matrices.outputs.matrix }}
-      delete: ${{ steps.generate-matrices.outputs.delete }}
+      delete: ${{ steps.generate-matrices.output s.delete }}
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v4
@@ -65,11 +65,8 @@ jobs:
           cache-read-only: ${{ matrix.chunk.number > 1 }}
 
       - name: Prepare signing key
-        env:
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         run: |
-          python3 -c "import base64, os; open('signingkey.jks', 'wb').write(base64.b64decode(os.environ['SIGNING_KEY']))"
-
+             keytool -genkey -v -keystore signingkey.jks -alias key0 -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=Unknown"
       - name: Build extensions (${{ matrix.chunk.number }})
         env:
           MODULES: ${{ join(matrix.chunk.modules, ' ') }}
