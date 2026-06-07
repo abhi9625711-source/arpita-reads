@@ -120,7 +120,7 @@ jobs:
       - name: Deploy to repo branch
         run: |
           mkdir -p /tmp/repo-deploy/apk
-          find ~/apk-artifacts -name "*.apk" -exec cp {} /tmp/repo-deploy/apk/ \;
+          cp -r main/repo/apk/. /tmp/repo-deploy/apk/ || true
           cp main/repo/index.min.json /tmp/repo-deploy/ || true
           cp main/repo/index.json /tmp/repo-deploy/ || true
           cp main/repo/index.pb /tmp/repo-deploy/ || true
