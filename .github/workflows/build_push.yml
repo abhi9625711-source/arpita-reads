@@ -124,10 +124,16 @@ jobs:
           path: repo
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Merge and deploy repo
+      - name: Copy APKs and deploy repo
         env:
           DELETE: ${{ needs.prepare.outputs.delete }}
         run: |
+          mkdir -p repo/apk
+          cp -r main/repo/apk/* repo/apk/ || true
+          cp main/repo/index.min.json repo/index.min.json || true
+          cp main/repo/index.json repo/index.json || true
+          cp main/repo/index.pb repo/index.pb || true
+          cp -r main/repo/icon repo/icon || true
           cd repo
           pip install protobuf
           python ../main/.github/scripts/merge-repo.py "$DELETE"
