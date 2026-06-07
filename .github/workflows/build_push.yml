@@ -89,7 +89,7 @@ jobs:
     needs: [prepare, build]
     if: always()
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Download APK artifacts
         uses: actions/download-artifact@v4
@@ -117,27 +117,20 @@ jobs:
           java -jar ./Inspector.jar "repo/apk" "output.json" "tmp"
           python ./.github/scripts/create-repo.py
 
-      - name: Checkout repo branch
-        uses: actions/checkout@v4
-        with:
-          ref: repo
-          path: repo
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Copy APKs and deploy repo
-        env:
-          DELETE: ${{ needs.prepare.outputs.delete }}
+      - name: Deploy to repo branch
         run: |
-          mkdir -p repo/apk
-          find ~/apk-artifacts -name "*.apk" -exec cp {} repo/apk/ \;
-          cp main/repo/index.min.json repo/index.min.json || true
-          cp main/repo/index.json repo/index.json || true
-          cp main/repo/index.pb repo/index.pb || true
-          cp -r main/repo/icon repo/icon || true
-          cd repo
-          rm -f .gitignore
+          mkdir -p /tmp/repo-deploy/apk
+          find ~/apk-artifacts -name "*.apk" -exec cp {} /tmp/repo-deploy/apk/ \;
+          cp main/repo/index.min.json /tmp/repo-deploy/ || true
+          cp main/repo/index.json /tmp/repo-deploy/ || true
+          cp main/repo/index.pb /tmp/repo-deploy/ || true
+          cp -r main/repo/icon /tmp/repo-deploy/ || true
+          cd /tmp/repo-deploy
+          git init
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add -f .
-          git commit -m "Update extensions repo" || echo "Nothing to commit"
-          git push
+          git checkout -b repo
+          git add .
+          git commit -m "Update extensions repo"
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/abhi9625711-source/arpita-reads.git
+          git push origin repo --force
